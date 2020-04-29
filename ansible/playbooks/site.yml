@@ -1,0 +1,9 @@
+---
+
+- name: "Configure MySQL server(s)"
+  hosts: "db_servers"
+  become: true
+  vars_files:
+    - "{{ inventory_dir }}/secrets/vault.yaml"
+  roles:
+    - geerlingguy.mysql
