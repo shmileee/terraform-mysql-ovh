@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
-set -ae
+set -e
 shopt -s extglob
 
 # Defaults variables
 export INSTANCES_COUNT=1
 export AUTO_APPROVE=false
-export AVAILABLE_CMDS='@(refresh|plan|destroy|validate)'
+export AVAILABLE_CMDS='@(refresh|plan|apply|destroy|validate)'
 
 cwd="$(cd "$(dirname ${BASH_SOURCE[0]})" && pwd)"
 
-[ -f "~/.openrc.sh" ] && source ~/openrc.sh
+[ -f ~/openrc.sh ] && source ~/openrc.sh
+
+
 
 function __iso8601_date(){
   date -u +'%Y-%m-%dT%H:%M:%SZ'
@@ -138,5 +140,17 @@ set_terraform_vars() {
 }
 
 set_terraform_vars
-[ ! -e ${cwd}/.terraform ] && terraform init 
-terraform "${COMMAND}"
+[ ! -e ${cwd}/.terraform ] && terraform init
+
+tf_cmd=()
+tf_cmd+="${COMMAND}"
+
+case "${COMMAND}" in
+    plan|apply|destroy)
+        tf_cmd+=("--parallelism" "20")
+        if [ "${COMMAND}" != "plan" -a "${AUTO_APPROVE}" == "true" ]; then
+            tf_cmd+="-auto-approve"
+        fi
+esac
+
+terraform "${tf_cmd[@]}"
