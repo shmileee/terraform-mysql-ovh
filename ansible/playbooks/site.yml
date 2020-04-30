@@ -1,7 +1,7 @@
 ---
 
 - name: "Configure MySQL server(s)"
-  hosts: "db_servers"
+  hosts: all
   become: true
   vars_files:
     - "{{ inventory_dir }}/secrets/vault.yaml"

@@ -75,31 +75,10 @@ resource "openstack_compute_instance_v2" "nodes" {
   }
 }
 
-data "template_file" "inventory" {
-  template   = "${file("${path.cwd}/ansible/templates/inventory.tpl")}"
+resource "null_resource" "inventory" {
   depends_on = [openstack_compute_instance_v2.nodes]
 
-  vars = {
-    hosts = "${join("\n", openstack_compute_instance_v2.nodes.*.access_ip_v4)}"
-    user  = "${var.ssh_user}"
-  }
-}
-
-resource "local_file" "inventory" {
-  content  = data.template_file.inventory.rendered
-  filename = "${path.cwd}/ansible/inventories/${var.name}/inventory.yml"
-}
-
-resource "null_resource" "inventory" {
-  triggers = {
-    template = data.template_file.inventory.rendered
-  }
-
   provisioner "local-exec" {
-    command = <<EOC
-      cd ${path.cwd}/ansible && make deps && ansible-playbook -i ./inventories/${var.name}/inventory.yml \
-      --private-key ${var.ssh_private_key} --vault-password-file ~/.vault \
-      ./playbooks/site.yml
-EOC
+    command =  "cd ${path.cwd}/ansible && make OS_REGION_NAME=${var.region} SSH_USER=${var.ssh_user}"
   }
 }

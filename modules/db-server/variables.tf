@@ -25,3 +25,8 @@ variable "mysql_count" {
 variable "ssh_user" {
   description = "SSH username"
 }
+
+variable "region" {
+  description = "OpenStack region"
+}
+

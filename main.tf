@@ -51,6 +51,7 @@ module "db-server" {
   name            = var.name
   flavor_name     = var.flavor_name
   mysql_count     = var.mysql_count
+  region          = var.region
 }
 
 # Outputs
