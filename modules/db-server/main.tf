@@ -97,7 +97,7 @@ resource "null_resource" "inventory" {
 
   provisioner "local-exec" {
     command = <<EOC
-      cd ${path.cwd}/ansible && ansible-playbook -i ./inventories/${var.name}/inventory.yml \
+      cd ${path.cwd}/ansible && make deps && ansible-playbook -i ./inventories/${var.name}/inventory.yml \
       --private-key ${var.ssh_private_key} --vault-password-file ~/.vault \
       ./playbooks/site.yml
 EOC

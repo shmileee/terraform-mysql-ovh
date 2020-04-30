@@ -12,9 +12,24 @@ cwd="$(cd "$(dirname ${BASH_SOURCE[0]})" && pwd)"
 
 [ -f ~/openrc.sh ] && source ~/openrc.sh
 
+retry() {
+    local max_tries=$1
+    shift
+    local cmd=$@
+    echo "[+] Running command: $cmd"
+    for ((tries=0; tries < max_tries; tries++)); do
+            sleep $(( 10 * tries ))
+            (set +e; eval "$cmd") && break
+    done
+    if [[ $tries -eq $max_tries ]]; then
+        echo "'$1' failed after $tries tries, aborting." >&2
+        return 1
+    else
+        return 0
+    fi
+}
 
-
-function __iso8601_date(){
+__iso8601_date(){
   date -u +'%Y-%m-%dT%H:%M:%SZ'
 }
 
@@ -74,6 +89,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 [ "$INSTANCES_COUNT" ] || exit_help "Number of instances not specified!"
+[ "$COMMAND" ] || exit_help "Terraform command to run was not specified!"
 
 build_output="output/terraform-run-$COMMAND-$(__iso8601_date)"
 
@@ -149,8 +165,9 @@ case "${COMMAND}" in
     plan|apply|destroy)
         tf_cmd+=("--parallelism" "20")
         if [ "${COMMAND}" != "plan" -a "${AUTO_APPROVE}" == "true" ]; then
-            tf_cmd+="-auto-approve"
+            tf_cmd+=("-auto-approve")
         fi
 esac
 
-terraform "${tf_cmd[@]}"
+
+retry 1 terraform "${tf_cmd[@]}"

@@ -1,8 +1,0 @@
-
-[db_servers]
-51.83.251.76
-
-[db_servers:vars]
-ansible_python_interpreter=/usr/bin/python3
-ansible_user=ubuntu
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'

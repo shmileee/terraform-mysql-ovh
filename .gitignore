@@ -1,3 +1,7 @@
 .terraform
 .dep_check
 output/
+
+# ignore galaxy role and inventory which is dynamic
+ansible/roles/geerlingguy.mysql
+ansible/inventories/csb/inventory.yml
