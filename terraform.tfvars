@@ -1,7 +1,0 @@
-region          = "WAW1"
-ssh_public_key  = "~/.ssh/id_rsa.pub"
-ssh_private_key = "~/.ssh/id_rsa"
-ssh_user        = "ubuntu"
-name            = "csb"
-flavor_name     = "s1-2"
-mysql_count     = "1"

@@ -1,0 +1,3 @@
+[submodule "deps/terraform-installer"]
+	path = deps/terraform-installer
+	url = https://github.com/robertpeteuil/terraform-installer
